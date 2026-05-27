@@ -3186,7 +3186,7 @@ Transform:
   m_GameObject: {fileID: 751240943}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -105.5, y: 52.19925, z: 87.7}
+  m_LocalPosition: {x: -105.5, y: 25.46, z: 87.7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4837,7 +4837,7 @@ PrefabInstance:
     - target: {fileID: 894248655105655236, guid: cdbc74c65d45b7a47aaca65d6b6ffef5, type: 3}
       propertyPath: m_Mesh
       value: 
-      objectReference: {fileID: 1919915195}
+      objectReference: {fileID: 1464768630}
     - target: {fileID: 929915899032912457, guid: cdbc74c65d45b7a47aaca65d6b6ffef5, type: 3}
       propertyPath: m_Name
       value: Fence (26)
