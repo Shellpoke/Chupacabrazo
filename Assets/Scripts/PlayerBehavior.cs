@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI; //library added for slider
 
 public class PlayerController : MonoBehaviour
 {
@@ -11,12 +12,20 @@ public class PlayerController : MonoBehaviour
     public float walkSpeed = 50f;
     public float runSpeed = 100f;
 
+    [Header("Stamina Details")]
+    public float maxStamina = 100f;
+    public float staminaRate = 1f;
+    public float staminaRegenDelay = 2f;
+    private float stamina = 100f;
+    private float staminaRegenTimer = 0f;
+    public Slider staminaBar;
+
     //Camera Settings Here
     [Header("Camera")]
     public Transform CameraHolder;
     public float mouseSensitivity = 300f;
-    public float minLookAngle = -20f;
-    public float maxLookAngle = 60f;
+    private float minLookAngle = -20f;
+    private float maxLookAngle = 60f;
     private float CameraPitch = 15f;
     private float verticalVelocity;
 
@@ -30,6 +39,11 @@ public class PlayerController : MonoBehaviour
  //----------------------------------------------------------UNITY FUNCTIONS HERE------------------------------------------------//
     void Start()
     {
+        //staminaBar setting
+        stamina = maxStamina;
+        staminaBar.maxValue = maxStamina;
+        staminaBar.value = stamina;
+
         controller = GetComponent<CharacterController>();
 
         Cursor.lockState = CursorLockMode.Locked;
@@ -45,7 +59,7 @@ public class PlayerController : MonoBehaviour
     }
 
 
- //-----------------------------------------------------------OTHER FUNCTIONS HERE-------------------------------------------------//
+    //-----------------------------------------------------------OTHER FUNCTIONS HERE-------------------------------------------------//
     void MovePlayer()
     {
         //this boolean checks if the player is on ground, to decide if jumping or gliding
@@ -57,19 +71,40 @@ public class PlayerController : MonoBehaviour
             verticalVelocity = -2f;
         }
 
-        //input collected and speed declared
+        //input collected and speed declared, variab;es
         float horizontal = Input.GetAxis("Horizontal");
         float vertical = Input.GetAxis("Vertical");
+        
         float moveSpeed = walkSpeed;
+
         Vector3 moveDirection = transform.right * horizontal + transform.forward * vertical;
         moveDirection = Vector3.ClampMagnitude(moveDirection, 1f); //prevents extra speed from double input from diagonals
-        
+
         //running trigger
-        if (Input.GetButton("Run"))
+        if (Input.GetButton("Run") && stamina > 0)
         {
             moveSpeed = runSpeed;
+
+            stamina -= staminaRate * Time.deltaTime;
+
+            // Reset the grace timer while running
+            staminaRegenTimer = staminaRegenDelay;
         }
-        Vector3 movement = moveDirection * moveSpeed; 
+        else
+        {
+            // Count down the grace timer
+            if (staminaRegenTimer > 0)
+            {
+                staminaRegenTimer -= Time.deltaTime;
+            }
+            else
+            {
+                stamina += staminaRate * Time.deltaTime;
+            }
+        }
+        stamina = Mathf.Clamp(stamina, 0, maxStamina);
+        Vector3 movement = moveDirection * moveSpeed;
+        staminaBar.value = stamina; //connects the stamina bar with the actual stamina variable
 
         //Jump trigger
         if (Input.GetButtonDown("Jump") && isGrounded)
@@ -92,6 +127,9 @@ public class PlayerController : MonoBehaviour
         movement.y = verticalVelocity; //actual falling
         controller.Move(movement * Time.deltaTime); //actual movement
     }
+
+
+
 
     void RotatePlayerAndCamera()
     {
