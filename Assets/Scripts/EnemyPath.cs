@@ -4,7 +4,7 @@ using UnityEngine.Splines;
 public class EnemyPath : MonoBehaviour
 {
     public SplineContainer path;
-    public float speed = 3f;
+    public float speed = 50f;
     [Range(0f, 1f)]
     public float startProgress = 0f;
     private float progress = 0f;
